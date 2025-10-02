@@ -602,6 +602,11 @@ class AgentManager:
                                     if add_tools == 's':
                                         agent.tools.extend(create_task_tools())
                                         print("✓ Herramientas de tareas agregadas")
+                                        
+                                        # Guardar el agente con las nuevas herramientas
+                                        agent_file = saved_agents[agent_num - 1]
+                                        agent.save_agent(str(agent_file))
+                                        print(f"✓ Agente guardado con herramientas de tareas en {agent_file.name}")
                         except (ValueError, IndexError):
                             print("⚠️  Selección inválida")
                             continue
