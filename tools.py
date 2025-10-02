@@ -96,25 +96,13 @@ def create_drawing_tool(enable_generation: bool = True) -> dict:
     }
 
 
-def create_selenium_tool() -> dict:
-    """
-    Crea una herramienta de Selenium para automatización web
-    
-    Returns:
-        Diccionario con la configuración de la herramienta
-    
-    Ejemplo:
-        tool = create_selenium_tool()
-        agent = Agent(name="Web Scraper", instructions="...", tools=[tool])
-    
-    Nota:
-        Requiere tener Chrome instalado en el sistema
-    """
+def create_selenium_navigate_tool() -> dict:
+    """Herramienta para navegar a URLs con Selenium"""
     return {
         'type': 'function',
         'function': {
             'name': 'selenium_navigate',
-            'description': 'Navega a una URL usando Selenium. Úsala para visitar páginas web y extraer información.',
+            'description': 'Navega a una URL usando Selenium. Úsala para visitar páginas web.',
             'parameters': {
                 'type': 'object',
                 'properties': {
@@ -127,6 +115,102 @@ def create_selenium_tool() -> dict:
             }
         }
     }
+
+
+def create_selenium_get_text_tool() -> dict:
+    """Herramienta para obtener texto de la página actual"""
+    return {
+        'type': 'function',
+        'function': {
+            'name': 'selenium_get_text',
+            'description': 'Obtiene todo el texto visible de la página web actual. Úsala después de navegar para extraer contenido.',
+            'parameters': {
+                'type': 'object',
+                'properties': {},
+                'required': []
+            }
+        }
+    }
+
+
+def create_selenium_find_text_tool() -> dict:
+    """Herramienta para buscar texto de elementos específicos"""
+    return {
+        'type': 'function',
+        'function': {
+            'name': 'selenium_find_text',
+            'description': 'Encuentra un elemento específico y obtiene su texto. Úsala para extraer información de elementos concretos.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'selector': {
+                        'type': 'string',
+                        'description': 'Selector del elemento (ej: "h1", "#title", ".price")'
+                    },
+                    'by': {
+                        'type': 'string',
+                        'enum': ['css', 'xpath', 'id', 'class'],
+                        'description': 'Tipo de selector (default: css)'
+                    }
+                },
+                'required': ['selector']
+            }
+        }
+    }
+
+
+def create_selenium_screenshot_tool() -> dict:
+    """Herramienta para tomar capturas de pantalla"""
+    return {
+        'type': 'function',
+        'function': {
+            'name': 'selenium_screenshot',
+            'description': 'Toma una captura de pantalla de la página actual. Úsala para guardar evidencia visual.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'filename': {
+                        'type': 'string',
+                        'description': 'Nombre del archivo (default: screenshot.png)'
+                    }
+                },
+                'required': []
+            }
+        }
+    }
+
+
+def create_selenium_tool() -> dict:
+    """
+    Crea herramienta básica de Selenium (solo navegación)
+    Para capacidades completas, usa create_selenium_tools_full()
+    """
+    return create_selenium_navigate_tool()
+
+
+def create_selenium_tools_full() -> list:
+    """
+    Crea todas las herramientas de Selenium disponibles
+    
+    Returns:
+        Lista con todas las herramientas de Selenium
+    
+    Ejemplo:
+        tools = create_selenium_tools_full()
+        agent = Agent(name="Web Scraper", instructions="...", tools=tools)
+    
+    Herramientas incluidas:
+        - selenium_navigate: Navegar a URLs
+        - selenium_get_text: Obtener texto de la página
+        - selenium_find_text: Buscar elementos específicos
+        - selenium_screenshot: Tomar capturas
+    """
+    return [
+        create_selenium_navigate_tool(),
+        create_selenium_get_text_tool(),
+        create_selenium_find_text_tool(),
+        create_selenium_screenshot_tool()
+    ]
 
 
 def create_telegram_tool() -> dict:

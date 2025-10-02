@@ -193,10 +193,28 @@ class Agent:
                     parse_mode=arguments.get('parse_mode')
                 )
             
-            # Selenium
+            # Selenium - Navegación
             elif function_name == 'selenium_navigate':
                 from selenium_handler import selenium_navigate
                 return selenium_navigate(arguments.get('url'))
+            
+            # Selenium - Obtener texto
+            elif function_name == 'selenium_get_text':
+                from selenium_handler import selenium_get_text
+                return selenium_get_text()
+            
+            # Selenium - Buscar elemento
+            elif function_name == 'selenium_find_text':
+                from selenium_handler import selenium_find_text
+                return selenium_find_text(
+                    arguments.get('selector'),
+                    arguments.get('by', 'css')
+                )
+            
+            # Selenium - Captura de pantalla
+            elif function_name == 'selenium_screenshot':
+                from selenium_handler import selenium_screenshot
+                return selenium_screenshot(arguments.get('filename', 'screenshot.png'))
             
             # Web Search - Z.AI maneja esto automáticamente
             # No necesitamos ejecutarlo manualmente
