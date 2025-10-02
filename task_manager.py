@@ -13,12 +13,13 @@ class Task:
     """Representa una tarea individual"""
     
     def __init__(self, id: int, description: str, completed: bool = False, 
-                 created_at: str = None, completed_at: str = None):
+                 created_at: str = None, completed_at: str = None, assigned_to: str = None):
         self.id = id
         self.description = description
         self.completed = completed
         self.created_at = created_at or datetime.now().isoformat()
         self.completed_at = completed_at
+        self.assigned_to = assigned_to  # Nombre del agente asignado
     
     def complete(self):
         """Marca la tarea como completada"""
@@ -32,7 +33,8 @@ class Task:
             'description': self.description,
             'completed': self.completed,
             'created_at': self.created_at,
-            'completed_at': self.completed_at
+            'completed_at': self.completed_at,
+            'assigned_to': self.assigned_to
         }
     
     @classmethod
@@ -43,12 +45,14 @@ class Task:
             description=data['description'],
             completed=data.get('completed', False),
             created_at=data.get('created_at'),
-            completed_at=data.get('completed_at')
+            completed_at=data.get('completed_at'),
+            assigned_to=data.get('assigned_to')
         )
     
     def __str__(self):
         status = "✅" if self.completed else "⬜"
-        return f"{status} [{self.id}] {self.description}"
+        agent_info = f" → {self.assigned_to}" if self.assigned_to else ""
+        return f"{status} [{self.id}] {self.description}{agent_info}"
 
 
 class TaskManager:
@@ -130,6 +134,27 @@ class TaskManager:
         """Elimina todas las tareas completadas"""
         self.tasks = [t for t in self.tasks if not t.completed]
         self.save_tasks()
+    
+    def assign_task(self, task_id: int, agent_name: str) -> bool:
+        """Asigna una tarea a un agente"""
+        for task in self.tasks:
+            if task.id == task_id:
+                task.assigned_to = agent_name
+                self.save_tasks()
+                return True
+        return False
+    
+    def get_tasks_by_agent(self, agent_name: str) -> List[Task]:
+        """Obtiene todas las tareas asignadas a un agente"""
+        return [t for t in self.tasks if t.assigned_to == agent_name]
+    
+    def get_agents_with_tasks(self) -> List[str]:
+        """Obtiene lista de agentes que tienen tareas asignadas"""
+        agents = set()
+        for task in self.tasks:
+            if task.assigned_to:
+                agents.add(task.assigned_to)
+        return sorted(list(agents))
     
     def get_summary(self) -> dict:
         """Obtiene un resumen de las tareas"""

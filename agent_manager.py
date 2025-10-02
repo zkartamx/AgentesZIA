@@ -483,12 +483,13 @@ class AgentManager:
             
             print("\n=== Menú de Tareas ===")
             print("1. Ver todas las tareas")
-            print("2. Crear nueva tarea")
-            print("3. Asignar tarea a un agente")
-            print("4. Marcar tarea como completada")
-            print("5. Eliminar tarea")
-            print("6. Limpiar tareas completadas")
-            print("7. Volver al menú principal")
+            print("2. Ver tareas por agente")
+            print("3. Crear nueva tarea")
+            print("4. Asignar tarea a un agente")
+            print("5. Marcar tarea como completada")
+            print("6. Eliminar tarea")
+            print("7. Limpiar tareas completadas")
+            print("8. Volver al menú principal")
             
             choice = input("\nSelecciona una opción: ").strip()
             
@@ -497,6 +498,44 @@ class AgentManager:
                 task_manager.print_tasks()
             
             elif choice == '2':
+                # Ver tareas por agente
+                agents = task_manager.get_agents_with_tasks()
+                if not agents:
+                    print("\n⚠️  No hay agentes con tareas asignadas")
+                    continue
+                
+                print("\n=== Agentes con Tareas ===")
+                for i, agent_name in enumerate(agents, 1):
+                    tasks = task_manager.get_tasks_by_agent(agent_name)
+                    pending = [t for t in tasks if not t.completed]
+                    completed = [t for t in tasks if t.completed]
+                    print(f"{i}. {agent_name} - {len(tasks)} tareas ({len(pending)} pendientes, {len(completed)} completadas)")
+                
+                agent_num = input("\nVer tareas de agente (número) o Enter para volver: ").strip()
+                if agent_num:
+                    try:
+                        agent_num = int(agent_num)
+                        if 1 <= agent_num <= len(agents):
+                            agent_name = agents[agent_num - 1]
+                            tasks = task_manager.get_tasks_by_agent(agent_name)
+                            
+                            print(f"\n=== Tareas de {agent_name} ===")
+                            pending = [t for t in tasks if not t.completed]
+                            completed = [t for t in tasks if t.completed]
+                            
+                            if pending:
+                                print("\n📋 Pendientes:")
+                                for task in pending:
+                                    print(f"  {task}")
+                            
+                            if completed:
+                                print("\n✅ Completadas:")
+                                for task in completed:
+                                    print(f"  {task}")
+                    except (ValueError, IndexError):
+                        print("⚠️  Selección inválida")
+            
+            elif choice == '3':
                 # Crear nueva tarea
                 description = input("\nDescripción de la tarea: ").strip()
                 if description:
@@ -505,7 +544,7 @@ class AgentManager:
                 else:
                     print("⚠️  Descripción vacía, tarea no creada")
             
-            elif choice == '3':
+            elif choice == '4':
                 # Asignar tarea a un agente
                 pending = task_manager.get_pending_tasks()
                 if not pending:
@@ -591,6 +630,9 @@ class AgentManager:
                         print(f"✓ Agente '{name}' creado con herramientas de tareas")
                     
                     if agent:
+                        # Asignar tarea al agente
+                        task_manager.assign_task(task.id, agent.name)
+                        
                         print(f"\n✓ Tarea #{task.id} asignada a '{agent.name}'")
                         print(f"📋 Tarea: {task.description}")
                         print("\nIniciando chat con el agente...")
@@ -609,7 +651,7 @@ class AgentManager:
                 except ValueError:
                     print("⚠️  ID inválido")
             
-            elif choice == '4':
+            elif choice == '5':
                 # Marcar como completada
                 pending = task_manager.get_pending_tasks()
                 if not pending:
@@ -631,7 +673,7 @@ class AgentManager:
                 except ValueError:
                     print("⚠️  ID inválido")
             
-            elif choice == '5':
+            elif choice == '6':
                 # Eliminar tarea
                 task_manager.print_tasks()
                 task_id = input("\nID de la tarea a eliminar: ").strip()
@@ -644,7 +686,7 @@ class AgentManager:
                 except ValueError:
                     print("⚠️  ID inválido")
             
-            elif choice == '6':
+            elif choice == '7':
                 # Limpiar completadas
                 completed = task_manager.get_completed_tasks()
                 if not completed:
@@ -657,7 +699,7 @@ class AgentManager:
                     task_manager.clear_completed()
                     print("✓ Tareas completadas eliminadas")
             
-            elif choice == '7':
+            elif choice == '8':
                 break
             
             else:
