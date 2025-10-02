@@ -233,6 +233,26 @@ class Agent:
                 from selenium_handler import selenium_screenshot
                 return selenium_screenshot(arguments.get('filename', 'screenshot.png'))
             
+            # Tareas - Agregar
+            elif function_name == 'task_add':
+                from task_manager import task_add
+                return task_add(arguments.get('description'))
+            
+            # Tareas - Completar
+            elif function_name == 'task_complete':
+                from task_manager import task_complete
+                return task_complete(arguments.get('task_id'))
+            
+            # Tareas - Listar
+            elif function_name == 'task_list':
+                from task_manager import task_list
+                return task_list()
+            
+            # Tareas - Eliminar
+            elif function_name == 'task_delete':
+                from task_manager import task_delete
+                return task_delete(arguments.get('task_id'))
+            
             # Web Search - Z.AI maneja esto automáticamente
             # No necesitamos ejecutarlo manualmente
             elif function_name == 'web_search':

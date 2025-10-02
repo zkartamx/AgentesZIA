@@ -8,6 +8,9 @@
 agents/*.json
 !agents/.gitkeep
 
+# Tareas (pueden contener información personal)
+tasks.json
+
 # Python
 __pycache__/
 *.py[cod]

@@ -228,6 +228,90 @@ def create_selenium_tools_full() -> list:
     ]
 
 
+def create_task_tools() -> list:
+    """
+    Crea herramientas para gestión de tareas
+    
+    Returns:
+        Lista con herramientas de gestión de tareas
+    
+    Ejemplo:
+        tools = create_task_tools()
+        agent = Agent(name="Task Manager", instructions="...", tools=tools)
+    
+    Herramientas incluidas:
+        - task_add: Agregar nueva tarea
+        - task_complete: Marcar tarea como completada
+        - task_list: Listar todas las tareas
+        - task_delete: Eliminar una tarea
+    """
+    return [
+        {
+            'type': 'function',
+            'function': {
+                'name': 'task_add',
+                'description': 'Agrega una nueva tarea a la lista. Úsala cuando el usuario te pida programar o recordar algo.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'description': {
+                            'type': 'string',
+                            'description': 'Descripción de la tarea'
+                        }
+                    },
+                    'required': ['description']
+                }
+            }
+        },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'task_complete',
+                'description': 'Marca una tarea como completada. Úsala cuando termines una tarea.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'task_id': {
+                            'type': 'integer',
+                            'description': 'ID de la tarea a completar'
+                        }
+                    },
+                    'required': ['task_id']
+                }
+            }
+        },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'task_list',
+                'description': 'Lista todas las tareas (pendientes y completadas). Úsala para ver el estado de las tareas.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {},
+                    'required': []
+                }
+            }
+        },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'task_delete',
+                'description': 'Elimina una tarea. Úsala cuando el usuario quiera cancelar una tarea.',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'task_id': {
+                            'type': 'integer',
+                            'description': 'ID de la tarea a eliminar'
+                        }
+                    },
+                    'required': ['task_id']
+                }
+            }
+        }
+    ]
+
+
 def create_telegram_tool() -> dict:
     """
     Crea una herramienta para enviar mensajes a Telegram
