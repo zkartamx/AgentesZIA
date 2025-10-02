@@ -8,6 +8,7 @@ import os
 from dotenv import load_dotenv
 import json
 import warnings
+from debug_config import DebugConfig, debug_print
 
 # Suprimir warnings de DSPy
 warnings.filterwarnings('ignore', module='dspy')
@@ -169,8 +170,8 @@ class DSPyAgent:
                 context=context
             )
             
-            # Mostrar decisión solo en modo debug
-            if self.debug:
+            # Mostrar decisión si debug está activo o si self.debug=True
+            if self.debug or DebugConfig.show_dspy_decisions:
                 print(f"\n🤖 DSPy Decision:")
                 print(f"   Should use tool: {decision['should_use_tool']}")
                 print(f"   Tool: {decision['tool_name']}")

@@ -2,6 +2,7 @@ from zai import ZaiClient
 from dotenv import load_dotenv
 import os
 import json
+from debug_config import DebugConfig, debug_print
 
 load_dotenv()
 
@@ -18,6 +19,12 @@ class Agent:
         
         # Generar instrucciones completas con información de herramientas
         full_instructions = self._build_instructions_with_tools(instructions)
+        
+        # Debug: Mostrar instrucciones
+        if DebugConfig.show_instructions:
+            debug_print("=== INSTRUCCIONES COMPLETAS ===")
+            debug_print(full_instructions)
+            debug_print("=" * 70)
         
         # Inicializar con las instrucciones del sistema
         self.conversation_history.append({
@@ -73,6 +80,9 @@ class Agent:
         Returns:
             La respuesta del agente
         """
+        # Debug: Mostrar mensaje del usuario
+        debug_print(f"Usuario: {message}", "show_tool_calls")
+        
         # Agregar mensaje del usuario al historial
         self.conversation_history.append({
             "role": "user",
@@ -109,7 +119,8 @@ class Agent:
                         break  # Éxito, salir del loop
                     except Exception as e:
                         if retry < max_retries - 1:
-                            print(f"\n⚠️  Reintentando... ({retry + 1}/{max_retries})")
+                            if DebugConfig.show_retries:
+                                print(f"\n⚠️  Reintentando... ({retry + 1}/{max_retries})")
                             continue
                         else:
                             raise  # Último intento falló, propagar error
@@ -135,8 +146,17 @@ class Agent:
                     function_name = tool_call.function.name
                     function_args = json.loads(tool_call.function.arguments)
                     
+                    # Debug: Mostrar tool call
+                    if DebugConfig.show_tool_calls:
+                        debug_print(f"🔧 Ejecutando: {function_name}")
+                        debug_print(f"   Argumentos: {function_args}")
+                    
                     # Ejecutar la función
                     function_response = self._execute_tool(function_name, function_args)
+                    
+                    # Debug: Mostrar resultado
+                    if DebugConfig.show_tool_calls:
+                        debug_print(f"   Resultado: {function_response}")
                     
                     # Agregar resultado al historial
                     self.conversation_history.append({

@@ -8,6 +8,7 @@ from agent_creator import Agent, create_math_tutor, create_code_reviewer, create
 from utils import LoadingIndicator
 from tools import create_web_search_tool, create_code_interpreter_tool, get_available_tools
 from dspy_agent import DSPyAgent
+from debug_config import DebugConfig, DebugLevel
 import os
 import json
 from pathlib import Path
@@ -399,13 +400,17 @@ class AgentManager:
                 
                 print(f"{agent.name}: {response}\n")
     
-    def run(self):
-        """Ejecutar el gestor de agentes"""
-        print("=" * 50)
-        print("    SISTEMA DE GESTIÓN DE AGENTES Z.AI")
-        print("=" * 50)
-        
+    def main_menu(self):
+        """Menú principal del gestor de agentes"""
         while True:
+            print("\n" + "=" * 50)
+            print("    SISTEMA DE GESTIÓN DE AGENTES Z.AI")
+            print("=" * 50)
+            
+            # Mostrar estado de debug
+            if DebugConfig.level != DebugLevel.NONE:
+                print(f"🐛 DEBUG: {DebugConfig.level.name}")
+            
             print("\n=== Menú Principal ===")
             print("1. Crear agente personalizado")
             print("2. Usar agente predefinido")
@@ -413,7 +418,8 @@ class AgentManager:
             print("4. Listar agentes guardados")
             print("5. Gestionar herramientas de agentes")
             print("6. Eliminar agentes guardados")
-            print("7. Salir")
+            print("7. Configurar Debug")
+            print("8. Salir")
             
             choice = input("\nSelecciona una opción: ").strip()
             
@@ -445,11 +451,42 @@ class AgentManager:
                 self.delete_saved_agents()
             
             elif choice == '7':
+                self.configure_debug()
+            
+            elif choice == '8':
                 print("\n¡Hasta luego!")
                 break
             
             else:
                 print("\nOpción inválida. Intenta de nuevo.")
+    
+    def configure_debug(self):
+        """Configurar nivel de debug"""
+        print("\n=== Configurar Debug ===")
+        print("0. Desactivado (NONE)")
+        print("1. Básico (decisiones DSPy + tool calls)")
+        print("2. Detallado (+ historial)")
+        print("3. Verbose (todo)")
+        print("4. Ver estado actual")
+        
+        choice = input("\nSelecciona nivel: ").strip()
+        
+        if choice == '0':
+            DebugConfig.set_level(DebugLevel.NONE)
+            print("✓ Debug desactivado")
+        elif choice == '1':
+            DebugConfig.set_level(DebugLevel.BASIC)
+            print("✓ Debug BÁSICO activado")
+        elif choice == '2':
+            DebugConfig.set_level(DebugLevel.DETAILED)
+            print("✓ Debug DETALLADO activado")
+        elif choice == '3':
+            DebugConfig.set_level(DebugLevel.VERBOSE)
+            print("✓ Debug VERBOSE activado")
+        elif choice == '4':
+            DebugConfig.print_status()
+        else:
+            print("Opción inválida")
 
 
 if __name__ == "__main__":
