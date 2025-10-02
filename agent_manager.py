@@ -463,11 +463,13 @@ class AgentManager:
     def configure_debug(self):
         """Configurar nivel de debug"""
         print("\n=== Configurar Debug ===")
+        print(f"Nivel actual: {DebugConfig.level.name} ({DebugConfig.level.value})")
+        print()
         print("0. Desactivado (NONE)")
         print("1. Básico (decisiones DSPy + tool calls)")
         print("2. Detallado (+ historial)")
         print("3. Verbose (todo)")
-        print("4. Ver estado actual")
+        print("4. Ver estado completo")
         
         choice = input("\nSelecciona nivel: ").strip()
         
