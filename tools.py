@@ -96,6 +96,39 @@ def create_drawing_tool(enable_generation: bool = True) -> dict:
     }
 
 
+def create_selenium_tool() -> dict:
+    """
+    Crea una herramienta de Selenium para automatización web
+    
+    Returns:
+        Diccionario con la configuración de la herramienta
+    
+    Ejemplo:
+        tool = create_selenium_tool()
+        agent = Agent(name="Web Scraper", instructions="...", tools=[tool])
+    
+    Nota:
+        Requiere tener Chrome instalado en el sistema
+    """
+    return {
+        'type': 'function',
+        'function': {
+            'name': 'selenium_navigate',
+            'description': 'Navega a una URL usando Selenium. Úsala para visitar páginas web y extraer información.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'url': {
+                        'type': 'string',
+                        'description': 'La URL a visitar (ej: https://www.example.com)'
+                    }
+                },
+                'required': ['url']
+            }
+        }
+    }
+
+
 def create_telegram_tool() -> dict:
     """
     Crea una herramienta para enviar mensajes a Telegram
@@ -176,6 +209,7 @@ def create_function_tool(name: str, description: str, parameters: dict) -> dict:
 TOOL_WEB_SEARCH = create_web_search_tool()
 TOOL_CODE_INTERPRETER = create_code_interpreter_tool()
 TOOL_DRAWING = create_drawing_tool()
+TOOL_SELENIUM = create_selenium_tool()
 TOOL_TELEGRAM = create_telegram_tool()
 
 
@@ -201,6 +235,11 @@ def get_available_tools() -> dict:
             'name': 'Drawing Tool',
             'description': 'Permite al agente generar imágenes',
             'function': create_drawing_tool
+        },
+        'selenium': {
+            'name': 'Selenium Web Automation',
+            'description': 'Permite al agente automatizar navegadores web y extraer información',
+            'function': create_selenium_tool
         },
         'telegram': {
             'name': 'Telegram',

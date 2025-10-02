@@ -51,7 +51,7 @@ python agent_manager.py
 ## ✨ Características
 
 - ✅ **Agentes Personalizados** - Crea agentes con instrucciones específicas
-- ✅ **Herramientas Integradas** - Web Search, Telegram, Code Interpreter, Drawing Tool
+- ✅ **Herramientas Integradas** - Web Search, Selenium, Telegram, Code Interpreter, Drawing Tool
 - ✅ **DSPy Automático** - Optimización inteligente de decisiones
 - ✅ **Gestión Completa** - Crear, guardar, cargar, eliminar agentes
 - ✅ **Modo Streaming** - Respuestas en tiempo real
@@ -156,6 +156,7 @@ Ver [Documentos/SEGURIDAD_GITHUB.md](Documentos/SEGURIDAD_GITHUB.md) para más i
 | Herramienta | Descripción | Guía |
 |-------------|-------------|------|
 | **Web Search** | Busca información en internet | [Guía](Documentos/GUIA_HERRAMIENTAS.md#web-search) |
+| **Selenium** | Automatiza navegadores web | [Guía](Documentos/GUIA_SELENIUM.md) |
 | **Telegram** | Envía mensajes a Telegram | [Guía](Documentos/GUIA_TELEGRAM.md) |
 | **Code Interpreter** | Ejecuta código Python | [Guía](Documentos/GUIA_HERRAMIENTAS.md#code-interpreter) |
 | **Drawing Tool** | Genera imágenes | [Guía](Documentos/GUIA_HERRAMIENTAS.md#drawing-tool) |

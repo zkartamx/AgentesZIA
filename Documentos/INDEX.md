@@ -25,6 +25,11 @@ Guía completa de toda la documentación del Sistema de Agentes Z.AI.
   - Funciones personalizadas
 
 ### Herramientas Específicas
+- **[GUIA_SELENIUM.md](GUIA_SELENIUM.md)** - Automatización web con Selenium
+  - Web scraping
+  - Automatización de navegadores
+  - Interacción con páginas web
+
 - **[GUIA_TELEGRAM.md](GUIA_TELEGRAM.md)** - Integración con Telegram
   - Configuración del bot
   - Envío de mensajes

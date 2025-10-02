@@ -2,3 +2,5 @@ zai-sdk==0.0.4
 python-dotenv==1.0.1
 dspy-ai>=3.0.3
 requests>=2.31.0
+selenium>=4.35.0
+webdriver-manager>=4.0.2

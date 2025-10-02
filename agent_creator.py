@@ -162,6 +162,11 @@ class Agent:
                     parse_mode=arguments.get('parse_mode')
                 )
             
+            # Selenium
+            elif function_name == 'selenium_navigate':
+                from selenium_handler import selenium_navigate
+                return selenium_navigate(arguments.get('url'))
+            
             # Web Search - Z.AI maneja esto automáticamente
             # No necesitamos ejecutarlo manualmente
             elif function_name == 'web_search':
