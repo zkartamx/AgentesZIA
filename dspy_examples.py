@@ -63,6 +63,7 @@ SELENIUM_EXAMPLES = [
         reasoning="Usuario pide explícitamente navegar a una URL usando Selenium"
     ).with_inputs("user_query", "available_tools", "conversation_context"),
     
+    # Ejemplo 14: Tareas - Revisar tareas pendientes
     dspy.Example(
         user_query="Realiza tus tareas pendientes",
         available_tools="task_list, task_complete, web_search",
@@ -72,6 +73,7 @@ SELENIUM_EXAMPLES = [
         reasoning="Usuario pide realizar tareas. PRIMERO debo usar task_list para ver qué tareas tengo asignadas"
     ).with_inputs("user_query", "available_tools", "conversation_context"),
     
+    # Ejemplo 15: Tareas - Qué tareas tengo
     dspy.Example(
         user_query="¿Qué tareas tienes?",
         available_tools="task_list, task_add",
@@ -81,6 +83,27 @@ SELENIUM_EXAMPLES = [
         reasoning="Usuario pregunta por mis tareas. Debo usar task_list para mostrarlas"
     ).with_inputs("user_query", "available_tools", "conversation_context"),
     
+    # Ejemplo 17: Tareas - Tienes tareas pendientes
+    dspy.Example(
+        user_query="Tienes tareas pendientes?",
+        available_tools="task_list, task_complete, web_search",
+        conversation_context="",
+        should_use_tool="yes",
+        tool_name="task_list",
+        reasoning="Usuario pregunta si tengo tareas pendientes. DEBO usar task_list para verificar, no puedo responder sin revisar"
+    ).with_inputs("user_query", "available_tools", "conversation_context"),
+    
+    # Ejemplo 18: Tareas - Variación de pregunta
+    dspy.Example(
+        user_query="¿Tienes algo pendiente?",
+        available_tools="task_list, task_add",
+        conversation_context="",
+        should_use_tool="yes",
+        tool_name="task_list",
+        reasoning="Pregunta sobre pendientes implica tareas. Debo usar task_list para verificar"
+    ).with_inputs("user_query", "available_tools", "conversation_context"),
+    
+    # Ejemplo 16: Tareas - Completar tarea
     dspy.Example(
         user_query="Marca la tarea 1 como completada",
         available_tools="task_complete, task_list",
