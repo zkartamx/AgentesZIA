@@ -284,15 +284,10 @@ def create_task_tools() -> list:
             'type': 'function',
             'function': {
                 'name': 'task_list',
-                'description': 'Lista tus tareas asignadas (pendientes y completadas). ÚSALA PRIMERO cuando el usuario diga "realiza tus tareas", "qué tareas tienes", "completa tus pendientes" o similar. IMPORTANTE: Debes pasar tu nombre como agent_name para ver SOLO tus tareas.',
+                'description': 'Lista SOLO TUS tareas asignadas (pendientes y completadas). ÚSALA PRIMERO cuando el usuario diga "realiza tus tareas", "qué tareas tienes", "tienes tareas pendientes" o similar. Automáticamente filtra solo las tareas asignadas a ti.',
                 'parameters': {
                     'type': 'object',
-                    'properties': {
-                        'agent_name': {
-                            'type': 'string',
-                            'description': 'Tu nombre como agente. Úsalo para filtrar solo tus tareas asignadas.'
-                        }
-                    },
+                    'properties': {},
                     'required': []
                 }
             }

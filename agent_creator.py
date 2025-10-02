@@ -79,9 +79,9 @@ class Agent:
                     tools_info += "  Úsala cuando el usuario te lo solicite explícitamente.\n"
                 elif 'task_' in func_name:
                     if func_name == 'task_list':
-                        tools_info += f"• TASK_LIST: Lista TUS tareas asignadas (pendientes y completadas).\n"
-                        tools_info += f"  ⚠️ IMPORTANTE: Úsala PRIMERO cuando el usuario diga 'realiza tus tareas'.\n"
-                        tools_info += f"  💡 TIP: Pasa agent_name='{self.name}' para ver SOLO tus tareas.\n"
+                        tools_info += f"• TASK_LIST: Lista SOLO TUS tareas asignadas a '{self.name}'.\n"
+                        tools_info += f"  ⚠️ IMPORTANTE: Úsala PRIMERO cuando el usuario diga 'realiza tus tareas' o 'tienes tareas pendientes'.\n"
+                        tools_info += f"  💡 Automáticamente filtra solo tus tareas (no necesitas pasar parámetros).\n"
                     elif func_name == 'task_add':
                         tools_info += "• TASK_ADD: Agrega una nueva tarea.\n"
                     elif func_name == 'task_complete':
@@ -258,9 +258,8 @@ class Agent:
             # Tareas - Listar
             elif function_name == 'task_list':
                 from task_manager import task_list
-                # Pasar el nombre del agente si está disponible
-                agent_name = arguments.get('agent_name', self.name)
-                return task_list(agent_name=agent_name)
+                # SIEMPRE usar el nombre del agente (self.name), ignorar lo que pase el modelo
+                return task_list(agent_name=self.name)
             
             # Tareas - Eliminar
             elif function_name == 'task_delete':
