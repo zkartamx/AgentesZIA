@@ -162,8 +162,8 @@ class DSPyAgent:
             # Obtener contexto de la conversación
             context = self._get_context()
             
-            # Decidir si usar herramientas
-            decision = self.tool_executor.forward(
+            # Decidir si usar herramientas (usar __call__ en lugar de forward)
+            decision = self.tool_executor(
                 user_query=message,
                 available_tools=self.base_agent.get_tools(),
                 context=context

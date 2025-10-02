@@ -59,7 +59,7 @@ class Agent:
         
         return base_instructions + tools_info
     
-    def chat(self, message: str, temperature: float = 0.7, max_tokens: int = 2000, use_tools: bool = None, max_tool_iterations: int = 5) -> str:
+    def chat(self, message: str, temperature: float = 0.7, max_tokens: int = 2000, use_tools: bool = None, max_tool_iterations: int = 5, timeout: int = 60) -> str:
         """
         Envía un mensaje al agente y obtiene una respuesta
         
@@ -99,9 +99,20 @@ class Agent:
                 if should_use_tools and self.tools:
                     request_params["tools"] = self.tools
                 
-                response = self.client.chat.completions.create(**request_params)
-                response_message = response.choices[0].message
-                finish_reason = response.choices[0].finish_reason
+                # Intentar con timeout y reintentos
+                max_retries = 2
+                for retry in range(max_retries):
+                    try:
+                        response = self.client.chat.completions.create(**request_params)
+                        response_message = response.choices[0].message
+                        finish_reason = response.choices[0].finish_reason
+                        break  # Éxito, salir del loop
+                    except Exception as e:
+                        if retry < max_retries - 1:
+                            print(f"\n⚠️  Reintentando... ({retry + 1}/{max_retries})")
+                            continue
+                        else:
+                            raise  # Último intento falló, propagar error
                 
                 # Agregar respuesta del asistente al historial
                 self.conversation_history.append({

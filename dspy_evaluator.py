@@ -34,8 +34,8 @@ class DSPyEvaluator:
         # (para que funcione con _format_tools)
         tools_list = []  # Simplificado para evaluación
         
-        # Obtener decisión de DSPy
-        decision = self.tool_executor.forward(
+        # Obtener decisión de DSPy (usar __call__ en lugar de forward)
+        decision = self.tool_executor(
             user_query=example.user_query,
             available_tools=example.available_tools,  # Pasar como string
             context=example.conversation_context
