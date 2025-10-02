@@ -6,9 +6,10 @@ Permite crear, guardar, cargar y chatear con agentes personalizados
 
 from agent_creator import Agent, create_math_tutor, create_code_reviewer, create_creative_writer
 from utils import LoadingIndicator
-from tools import create_web_search_tool, create_code_interpreter_tool, get_available_tools
+from tools import create_web_search_tool, create_code_interpreter_tool, get_available_tools, create_task_tools
 from dspy_agent import DSPyAgent
 from debug_config import DebugConfig, DebugLevel
+from task_manager import TaskManager
 import os
 import json
 from pathlib import Path
@@ -418,8 +419,9 @@ class AgentManager:
             print("4. Listar agentes guardados")
             print("5. Gestionar herramientas de agentes")
             print("6. Eliminar agentes guardados")
-            print("7. Configurar Debug")
-            print("8. Salir")
+            print("7. Gestionar Tareas")
+            print("8. Configurar Debug")
+            print("9. Salir")
             
             choice = input("\nSelecciona una opción: ").strip()
             
@@ -451,14 +453,221 @@ class AgentManager:
                 self.delete_saved_agents()
             
             elif choice == '7':
-                self.configure_debug()
+                self.manage_tasks()
             
             elif choice == '8':
+                self.configure_debug()
+            
+            elif choice == '9':
                 print("\n¡Hasta luego!")
                 break
             
             else:
                 print("\nOpción inválida. Intenta de nuevo.")
+    
+    def manage_tasks(self):
+        """Gestionar tareas y asignarlas a agentes"""
+        task_manager = TaskManager()
+        
+        while True:
+            print("\n" + "=" * 70)
+            print("  GESTIÓN DE TAREAS")
+            print("=" * 70)
+            
+            # Mostrar resumen
+            summary = task_manager.get_summary()
+            print(f"\n📊 Resumen: {summary['total']} total | "
+                  f"{summary['completed']} completadas | "
+                  f"{summary['pending']} pendientes | "
+                  f"Progreso: {summary['progress']:.1f}%")
+            
+            print("\n=== Menú de Tareas ===")
+            print("1. Ver todas las tareas")
+            print("2. Crear nueva tarea")
+            print("3. Asignar tarea a un agente")
+            print("4. Marcar tarea como completada")
+            print("5. Eliminar tarea")
+            print("6. Limpiar tareas completadas")
+            print("7. Volver al menú principal")
+            
+            choice = input("\nSelecciona una opción: ").strip()
+            
+            if choice == '1':
+                # Ver todas las tareas
+                task_manager.print_tasks()
+            
+            elif choice == '2':
+                # Crear nueva tarea
+                description = input("\nDescripción de la tarea: ").strip()
+                if description:
+                    task = task_manager.add_task(description)
+                    print(f"✓ Tarea #{task.id} creada: {description}")
+                else:
+                    print("⚠️  Descripción vacía, tarea no creada")
+            
+            elif choice == '3':
+                # Asignar tarea a un agente
+                pending = task_manager.get_pending_tasks()
+                if not pending:
+                    print("\n⚠️  No hay tareas pendientes")
+                    continue
+                
+                print("\n=== Tareas Pendientes ===")
+                for task in pending:
+                    print(f"  {task}")
+                
+                task_id = input("\nID de la tarea a asignar: ").strip()
+                try:
+                    task_id = int(task_id)
+                    task = task_manager.get_task(task_id)
+                    if not task or task.completed:
+                        print("⚠️  Tarea no encontrada o ya completada")
+                        continue
+                    
+                    # Seleccionar agente
+                    print("\n=== Seleccionar Agente ===")
+                    print("1. Cargar agente guardado")
+                    print("2. Crear agente nuevo con herramientas de tareas")
+                    
+                    agent_choice = input("\nSelecciona opción: ").strip()
+                    
+                    agent = None
+                    if agent_choice == '1':
+                        # Cargar agente existente
+                        saved_agents = self.list_saved_agents_data()
+                        if not saved_agents:
+                            print("⚠️  No hay agentes guardados")
+                            continue
+                        
+                        print("\n=== Agentes Guardados ===")
+                        for i, agent_file in enumerate(saved_agents, 1):
+                            agent_data = Agent.load_agent(agent_file)
+                            print(f"{i}. {agent_data.name}")
+                        
+                        agent_num = input("\nSelecciona un agente (número): ").strip()
+                        try:
+                            agent_num = int(agent_num)
+                            if 1 <= agent_num <= len(saved_agents):
+                                agent = Agent.load_agent(saved_agents[agent_num - 1])
+                                
+                                # Agregar herramientas de tareas si no las tiene
+                                has_task_tools = any(
+                                    t.get('function', {}).get('name', '').startswith('task_')
+                                    for t in agent.get_tools()
+                                    if t.get('type') == 'function'
+                                )
+                                
+                                if not has_task_tools:
+                                    print("\n⚠️  Este agente no tiene herramientas de tareas")
+                                    add_tools = input("¿Agregar herramientas de tareas? (s/n): ").strip().lower()
+                                    if add_tools == 's':
+                                        agent.tools.extend(create_task_tools())
+                                        print("✓ Herramientas de tareas agregadas")
+                        except (ValueError, IndexError):
+                            print("⚠️  Selección inválida")
+                            continue
+                    
+                    elif agent_choice == '2':
+                        # Crear agente nuevo
+                        name = input("\nNombre del agente: ").strip()
+                        if not name:
+                            print("⚠️  Nombre vacío")
+                            continue
+                        
+                        agent = Agent(
+                            name=name,
+                            instructions=f"""
+                            Eres un asistente que gestiona tareas.
+                            
+                            TAREA ASIGNADA: {task.description}
+                            
+                            REGLAS:
+                            - Completa la tarea asignada
+                            - Cuando termines, marca la tarea como completada con task_complete
+                            - Usa task_list para ver el progreso
+                            """,
+                            tools=create_task_tools()
+                        )
+                        print(f"✓ Agente '{name}' creado con herramientas de tareas")
+                    
+                    if agent:
+                        print(f"\n✓ Tarea #{task.id} asignada a '{agent.name}'")
+                        print(f"📋 Tarea: {task.description}")
+                        print("\nIniciando chat con el agente...")
+                        
+                        # Envolver con DSPy si tiene herramientas
+                        if agent.get_tools():
+                            agent = DSPyAgent(agent)
+                        
+                        # Mensaje inicial
+                        initial_message = f"Tu tarea es: {task.description}. Por favor, complétala."
+                        print(f"\nSistema: {initial_message}\n")
+                        
+                        # Chat con el agente
+                        self.chat_with_agent(agent)
+                        
+                except ValueError:
+                    print("⚠️  ID inválido")
+            
+            elif choice == '4':
+                # Marcar como completada
+                pending = task_manager.get_pending_tasks()
+                if not pending:
+                    print("\n⚠️  No hay tareas pendientes")
+                    continue
+                
+                print("\n=== Tareas Pendientes ===")
+                for task in pending:
+                    print(f"  {task}")
+                
+                task_id = input("\nID de la tarea a completar: ").strip()
+                try:
+                    task_id = int(task_id)
+                    if task_manager.complete_task(task_id):
+                        task = task_manager.get_task(task_id)
+                        print(f"✅ Tarea #{task_id} completada: {task.description}")
+                    else:
+                        print("⚠️  Tarea no encontrada o ya completada")
+                except ValueError:
+                    print("⚠️  ID inválido")
+            
+            elif choice == '5':
+                # Eliminar tarea
+                task_manager.print_tasks()
+                task_id = input("\nID de la tarea a eliminar: ").strip()
+                try:
+                    task_id = int(task_id)
+                    if task_manager.delete_task(task_id):
+                        print(f"✓ Tarea #{task_id} eliminada")
+                    else:
+                        print("⚠️  Tarea no encontrada")
+                except ValueError:
+                    print("⚠️  ID inválido")
+            
+            elif choice == '6':
+                # Limpiar completadas
+                completed = task_manager.get_completed_tasks()
+                if not completed:
+                    print("\n⚠️  No hay tareas completadas para limpiar")
+                    continue
+                
+                print(f"\n⚠️  Se eliminarán {len(completed)} tareas completadas")
+                confirm = input("¿Confirmar? (s/n): ").strip().lower()
+                if confirm == 's':
+                    task_manager.clear_completed()
+                    print("✓ Tareas completadas eliminadas")
+            
+            elif choice == '7':
+                break
+            
+            else:
+                print("\nOpción inválida. Intenta de nuevo.")
+    
+    def list_saved_agents_data(self):
+        """Obtiene lista de archivos de agentes guardados"""
+        if not self.agents_dir.exists():
+            return []
+        return sorted(self.agents_dir.glob("*.json"))
     
     def configure_debug(self):
         """Configurar nivel de debug"""
