@@ -487,6 +487,10 @@ class AgentManager:
             DebugConfig.print_status()
         else:
             print("Opción inválida")
+    
+    def run(self):
+        """Ejecutar el sistema de gestión de agentes"""
+        self.main_menu()
 
 
 if __name__ == "__main__":
