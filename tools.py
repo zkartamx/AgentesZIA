@@ -180,12 +180,27 @@ def create_selenium_screenshot_tool() -> dict:
     }
 
 
-def create_selenium_tool() -> dict:
+def create_selenium_tool() -> list:
     """
-    Crea herramienta básica de Selenium (solo navegación)
-    Para capacidades completas, usa create_selenium_tools_full()
+    Crea todas las herramientas de Selenium disponibles
+    
+    Returns:
+        Lista con todas las herramientas de Selenium
+    
+    Ejemplo:
+        tool = create_selenium_tool()
+        agent = Agent(name="Web Scraper", instructions="...", tools=tool)
+    
+    Herramientas incluidas:
+        - selenium_navigate: Navegar a URLs
+        - selenium_get_text: Obtener texto de la página
+        - selenium_find_text: Buscar elementos específicos
+        - selenium_screenshot: Tomar capturas
+    
+    Nota:
+        Si solo quieres navegación, usa create_selenium_navigate_tool()
     """
-    return create_selenium_navigate_tool()
+    return create_selenium_tools_full()
 
 
 def create_selenium_tools_full() -> list:
@@ -321,8 +336,8 @@ def get_available_tools() -> dict:
             'function': create_drawing_tool
         },
         'selenium': {
-            'name': 'Selenium Web Automation',
-            'description': 'Permite al agente automatizar navegadores web y extraer información',
+            'name': 'Selenium Web Automation (Completo)',
+            'description': 'Permite al agente: navegar, extraer texto, buscar elementos y tomar capturas',
             'function': create_selenium_tool
         },
         'telegram': {

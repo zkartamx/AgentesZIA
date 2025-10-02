@@ -61,6 +61,23 @@ class Agent:
             elif tool_type == 'drawing_tool':
                 tools_info += "• DRAWING TOOL: Puedes generar imágenes.\n"
                 tools_info += "  Úsala cuando te pidan crear visualizaciones o imágenes.\n\n"
+            
+            elif tool_type == 'function':
+                func_name = tool.get('function', {}).get('name', '')
+                if 'selenium' in func_name:
+                    if func_name == 'selenium_navigate':
+                        tools_info += "• SELENIUM NAVIGATE: Navega a páginas web.\n"
+                    elif func_name == 'selenium_get_text':
+                        tools_info += "• SELENIUM GET TEXT: Extrae TODO el texto de la página actual.\n"
+                        tools_info += "  IMPORTANTE: Úsala SIEMPRE después de navegar para obtener el contenido.\n"
+                    elif func_name == 'selenium_find_text':
+                        tools_info += "• SELENIUM FIND TEXT: Busca elementos específicos en la página.\n"
+                    elif func_name == 'selenium_screenshot':
+                        tools_info += "• SELENIUM SCREENSHOT: Toma capturas de pantalla.\n"
+                elif func_name == 'send_telegram_message':
+                    tools_info += "• SEND_TELEGRAM_MESSAGE: Envía mensajes por Telegram.\n"
+                    tools_info += "  Úsala cuando el usuario te lo solicite explícitamente.\n"
+                tools_info += "\n"
         
         tools_info += "IMPORTANTE: Usa las herramientas apropiadas según la tarea. Si no estás seguro, pregunta al usuario."
         
