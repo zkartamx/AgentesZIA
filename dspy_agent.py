@@ -12,6 +12,11 @@ from debug_config import DebugConfig, debug_print
 
 # Suprimir warnings de DSPy
 warnings.filterwarnings('ignore', module='dspy')
+warnings.filterwarnings('ignore', category=UserWarning, module='dspy')
+
+# Suprimir warnings específicos de DSPy
+import logging
+logging.getLogger('dspy').setLevel(logging.ERROR)
 
 load_dotenv()
 
