@@ -217,6 +217,17 @@ Agente: El precio actual de Bitcoin es...
 3. **Usa VERBOSE solo si necesitas todo** - Mucha información
 4. **Desactiva en producción** - DEBUG_LEVEL=0
 
+## ⚠️ Limitaciones
+
+### Modo Streaming
+
+El debug tiene **funcionalidad limitada** en modo streaming:
+- ✅ Muestra mensaje del usuario
+- ❌ No muestra decisiones de DSPy (streaming no usa DSPy)
+- ❌ No muestra tool calls en tiempo real
+
+**Recomendación:** Para debugging completo, usa modo normal (sin `stream`)
+
 ## 🔍 Troubleshooting
 
 ### No veo mensajes de debug

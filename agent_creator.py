@@ -233,6 +233,9 @@ class Agent:
         Yields:
             Fragmentos de la respuesta del agente
         """
+        # Debug: Mostrar mensaje del usuario
+        debug_print(f"[STREAM] Usuario: {message}", "show_tool_calls")
+        
         # Agregar mensaje del usuario al historial
         self.conversation_history.append({
             "role": "user",
