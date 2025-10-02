@@ -1,0 +1,4 @@
+zai-sdk==0.0.4
+python-dotenv==1.0.1
+dspy-ai>=3.0.3
+requests>=2.31.0
