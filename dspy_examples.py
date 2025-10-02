@@ -47,27 +47,52 @@ WEB_SEARCH_EXAMPLES = [
         user_query="Explícame qué es blockchain",
         available_tools="web_search: Busca información actualizada en internet",
         conversation_context="Sin contexto previo",
-        should_use_tool="no",
         tool_name="none",
         reasoning="Pregunta conceptual que puede responderse con conocimiento general. No necesita datos actualizados."
     ).with_inputs("user_query", "available_tools", "conversation_context"),
 ]
 
-# Ejemplos de cuándo usar Telegram
-TELEGRAM_EXAMPLES = [
+# Ejemplos de cuándo usar Selenium
+SELENIUM_EXAMPLES = [
     dspy.Example(
-        user_query="Envíame un mensaje a Telegram",
-        available_tools="send_telegram_message: Envía un mensaje a través de un bot de Telegram",
-        conversation_context="Sin contexto previo",
+        user_query="Navega a https://www.example.com",
+        available_tools="selenium_navigate, web_search",
+        conversation_context="",
         should_use_tool="yes",
-        tool_name="send_telegram_message",
-        reasoning="Usuario pide explícitamente enviar un mensaje a Telegram."
+        tool_name="selenium_navigate",
+        reasoning="Usuario pide explícitamente navegar a una URL usando Selenium"
+    ).with_inputs("user_query", "available_tools", "conversation_context"),
+    
+    dspy.Example(
+        user_query="Realiza tus tareas pendientes",
+        available_tools="task_list, task_complete, web_search",
+        conversation_context="",
+        should_use_tool="yes",
+        tool_name="task_list",
+        reasoning="Usuario pide realizar tareas. PRIMERO debo usar task_list para ver qué tareas tengo asignadas"
+    ).with_inputs("user_query", "available_tools", "conversation_context"),
+    
+    dspy.Example(
+        user_query="¿Qué tareas tienes?",
+        available_tools="task_list, task_add",
+        conversation_context="",
+        should_use_tool="yes",
+        tool_name="task_list",
+        reasoning="Usuario pregunta por mis tareas. Debo usar task_list para mostrarlas"
+    ).with_inputs("user_query", "available_tools", "conversation_context"),
+    
+    dspy.Example(
+        user_query="Marca la tarea 1 como completada",
+        available_tools="task_complete, task_list",
+        conversation_context="Acabo de terminar la tarea #1",
+        should_use_tool="yes",
+        tool_name="task_complete",
+        reasoning="Usuario pide marcar tarea como completada. Debo usar task_complete"
     ).with_inputs("user_query", "available_tools", "conversation_context"),
     
     dspy.Example(
         user_query="Notifícame cuando termines",
         available_tools="send_telegram_message: Envía un mensaje a través de un bot de Telegram",
-        conversation_context="user: Analiza estos datos | assistant: Análisis completado",
         should_use_tool="yes",
         tool_name="send_telegram_message",
         reasoning="Usuario pide notificación, debe usar Telegram para enviar el aviso."

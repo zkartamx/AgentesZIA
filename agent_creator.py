@@ -77,6 +77,17 @@ class Agent:
                 elif func_name == 'send_telegram_message':
                     tools_info += "• SEND_TELEGRAM_MESSAGE: Envía mensajes por Telegram.\n"
                     tools_info += "  Úsala cuando el usuario te lo solicite explícitamente.\n"
+                elif 'task_' in func_name:
+                    if func_name == 'task_list':
+                        tools_info += "• TASK_LIST: Lista todas tus tareas pendientes y completadas.\n"
+                        tools_info += "  ⚠️ IMPORTANTE: Úsala PRIMERO cuando el usuario diga 'realiza tus tareas' o similar.\n"
+                    elif func_name == 'task_add':
+                        tools_info += "• TASK_ADD: Agrega una nueva tarea.\n"
+                    elif func_name == 'task_complete':
+                        tools_info += "• TASK_COMPLETE: Marca una tarea como completada.\n"
+                        tools_info += "  Úsala DESPUÉS de completar cada tarea.\n"
+                    elif func_name == 'task_delete':
+                        tools_info += "• TASK_DELETE: Elimina una tarea.\n"
                 tools_info += "\n"
         
         tools_info += "IMPORTANTE: Usa las herramientas apropiadas según la tarea. Si no estás seguro, pregunta al usuario."

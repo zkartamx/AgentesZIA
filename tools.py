@@ -284,7 +284,7 @@ def create_task_tools() -> list:
             'type': 'function',
             'function': {
                 'name': 'task_list',
-                'description': 'Lista todas las tareas (pendientes y completadas). Úsala para ver el estado de las tareas.',
+                'description': 'Lista todas tus tareas asignadas (pendientes y completadas). ÚSALA PRIMERO cuando el usuario diga "realiza tus tareas", "qué tareas tienes", "completa tus pendientes" o similar. Esto te mostrará qué tareas debes hacer.',
                 'parameters': {
                     'type': 'object',
                     'properties': {},
