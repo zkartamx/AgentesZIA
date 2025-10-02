@@ -228,18 +228,45 @@ def task_complete(task_id: int) -> dict:
     }
 
 
-def task_list() -> dict:
-    """Lista todas las tareas"""
+def task_list(agent_name: str = None) -> dict:
+    """
+    Lista todas las tareas o solo las de un agente específico
+    
+    Args:
+        agent_name: Nombre del agente (opcional). Si se proporciona, solo muestra sus tareas.
+    """
     manager = TaskManager()
-    pending = manager.get_pending_tasks()
-    completed = manager.get_completed_tasks()
-    summary = manager.get_summary()
+    
+    # Si se especifica un agente, filtrar solo sus tareas
+    if agent_name:
+        all_tasks = manager.get_tasks_by_agent(agent_name)
+        pending = [t for t in all_tasks if not t.completed]
+        completed = [t for t in all_tasks if t.completed]
+        
+        # Calcular resumen solo para este agente
+        total = len(all_tasks)
+        completed_count = len(completed)
+        pending_count = len(pending)
+        progress = (completed_count / total * 100) if total > 0 else 0
+        
+        summary = {
+            'total': total,
+            'completed': completed_count,
+            'pending': pending_count,
+            'progress': progress
+        }
+    else:
+        # Mostrar todas las tareas
+        pending = manager.get_pending_tasks()
+        completed = manager.get_completed_tasks()
+        summary = manager.get_summary()
     
     return {
         'success': True,
-        'pending': [{'id': t.id, 'description': t.description} for t in pending],
-        'completed': [{'id': t.id, 'description': t.description} for t in completed],
-        'summary': summary
+        'pending': [{'id': t.id, 'description': t.description, 'assigned_to': t.assigned_to} for t in pending],
+        'completed': [{'id': t.id, 'description': t.description, 'assigned_to': t.assigned_to} for t in completed],
+        'summary': summary,
+        'agent_name': agent_name
     }
 
 
